@@ -1,6 +1,6 @@
 import express,{Request, Response, NextFunction} from 'express';
 import AbstractController from '../controllers/AbstractController';
-import db from '../models'
+import mongoose from 'mongoose';
 
 class Server{
 
@@ -10,10 +10,15 @@ class Server{
     private env:string;
 
     //Métodos constructores
-    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string}){
+    constructor(appInit: {
+        port: number;
+        middlewares: any[];
+        controllers: AbstractController[];
+        env: string;
+    }) {
         this.app=express();
         this.port=appInit.port;
-        this.env=appInit.env;  
+        this.env=appInit.env;
         this.loadMiddlewares(appInit.middlewares);      
         this.routes(appInit.controllers);
     }
@@ -41,12 +46,16 @@ class Server{
     }
 
     //Agregar la conexión a la base de datos
-    private async databases(){
-        await db.sequelize.sync();
+    public databaseConnect(mongodbUri: string): void {
+        mongoose.connect(mongodbUri, {}).then(() => {
+            console.log("Successfully connected to MongoDB");
+        })
+        .catch((e) => {
+            console.log(e);
+        });
     }
 
     public async init(){
-        await this.databases();
         this.app.listen(this.port,()=>{
             console.log(`Server:Running @'http://localhost:${this.port}'`);
         })

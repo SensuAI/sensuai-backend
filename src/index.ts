@@ -1,11 +1,7 @@
 import Server from "./providers/Server";
-import { PORT,NODE_ENV } from "./config";
+import { PORT,NODE_ENV, MONGODB_URI } from "./config";
 import express from 'express';
 import cors from 'cors';
-import UserController from "./controllers/UserController";
-import AuthenticationController from './controllers/AuthenticationController';
-
-
 
 const app = new Server({
     port:PORT,
@@ -15,8 +11,6 @@ const app = new Server({
         cors()
     ],
     controllers:[
-        UserController.getInstance(),
-        AuthenticationController.getInstance()
     ],
     env:NODE_ENV
 });
@@ -30,5 +24,5 @@ declare global{
     }
 }
 
-
+app.databaseConnect(MONGODB_URI);
 app.init();
