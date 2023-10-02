@@ -20,7 +20,7 @@ class UserController extends AbstractController {
     /* Routes definition and configuration */
     protected initRoutes(): void {
         this.router.post("/signup", this.signup.bind(this));
-        this.router.post("/login", this.login.bind(this));
+        this.router.post("/signin", this.signin.bind(this));
     }
 
     /* Routes Methods */
@@ -49,7 +49,7 @@ class UserController extends AbstractController {
         }
     }
 
-    private async login(req: Request, res: Response): Promise<void> {
+    private async signin(req: Request, res: Response): Promise<void> {
         try {
             const user: HydratedDocument<IUser> | null =
                 await this._model.findOne({
