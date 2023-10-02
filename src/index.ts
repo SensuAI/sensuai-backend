@@ -2,6 +2,7 @@ import Server from "./providers/Server";
 import { PORT,NODE_ENV, MONGODB_URI } from "./config";
 import express from 'express';
 import cors from 'cors';
+import UserController from "./controllers/UserController";
 
 const app = new Server({
     port:PORT,
@@ -11,6 +12,7 @@ const app = new Server({
         cors()
     ],
     controllers:[
+        UserController.getInstance()
     ],
     env:NODE_ENV
 });
