@@ -60,11 +60,7 @@ class UserController extends AbstractController {
 
             res.status(200).send({
                 status: "Success",
-                message: "The user was found",
-                data: {
-                    // TODO: Change
-                    user: user,
-                },
+                message: "The user was found"
             });
         } catch (errorMessage) {
             res.status(400).send({
@@ -72,7 +68,6 @@ class UserController extends AbstractController {
                 message: errorMessage,
             });
         }
-        return;
     }
 }
 
