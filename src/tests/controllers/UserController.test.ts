@@ -41,7 +41,7 @@ describe("LoginTest", () => {
     it("Success", async () => {
         // Create the user
         await testRequest.post("/user/signup").send(user);
-        const result = await testRequest.post("/user/login").send({
+        const result = await testRequest.post("/user/signin").send({
             email: user.email,
             password: user.password
         });
@@ -52,8 +52,8 @@ describe("LoginTest", () => {
     
     it("IncorrectEmailFailure", async () => {
         // Create the user
-        await testRequest.post("/user/signup").send(user);
-        const result = await testRequest.post("/user/login").send({
+        await testRequest.post("/user/signin").send(user);
+        const result = await testRequest.post("/user/signin").send({
             email: "incorrect@email.com",
             password: user.password
         });
@@ -65,7 +65,7 @@ describe("LoginTest", () => {
     it("IncorrectPasswordFailure", async () => {
         // Create the user
         await testRequest.post("/user/signup").send(user);
-        const result = await testRequest.post("/user/login").send({
+        const result = await testRequest.post("/user/signin").send({
             email: user.email,
             password: "IncorrectPassword"
         });

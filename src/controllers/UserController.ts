@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import AbstractController from "./AbstractController";
 import { HydratedDocument, Model } from "mongoose";
+import bcrypt from "bcryptjs";
 import { IUser, UserModel } from "../models/User";
 // Models
 
@@ -32,11 +33,20 @@ class UserController extends AbstractController {
                     email: req.body.email
                 });
             if (user) throw "The email is already in use";
+            
+            const password: string = req.body.password;
+            const salt = bcrypt.genSaltSync();
+            const hashedPassword: string = bcrypt.hashSync(password, salt);
             const newUser: HydratedDocument<IUser> = await this._model.create(
                 new UserModel({
-                    ...req.body
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name,
+                    email: req.body.email,
+                    hashed_password: hashedPassword,
+                    role: req.body.role
                 })
             );
+            
             res.status(200).send({
                 status: "Success",
                 message: "User created"
@@ -54,9 +64,12 @@ class UserController extends AbstractController {
             const user: HydratedDocument<IUser> | null =
                 await this._model.findOne({
                     email: req.body.email,
-                    password: req.body.password
                 });
             if (!user) throw "Incorrect email/password";
+            
+            const password: string = req.body.password;
+            const passwordOk = bcrypt.compareSync(password, user.hashed_password);
+            if (!passwordOk) throw "Incorrect email/password";
 
             res.status(200).send({
                 status: "Success",
