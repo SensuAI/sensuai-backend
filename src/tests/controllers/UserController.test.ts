@@ -127,8 +127,8 @@ describe("ChangePasswordTest", () => {
         await testRequest.post("/user/signup").send(user);
         const result = await testRequest.post(
             "/user/changePassword").send({
-                email: "",
-                password: user.password,
+                email: user.email,
+                password: "IncorrectPassword",
                 new_password: "NewPassword"
             });
         expect(result.status).toEqual(400);
