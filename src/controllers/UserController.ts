@@ -33,10 +33,10 @@ class UserController extends AbstractController {
                     email: req.body.email
                 });
             if (user) throw "The email is already in use";
-            
+
             const password: string = req.body.password;
-            const salt = bcrypt.genSaltSync();
-            const hashedPassword: string = bcrypt.hashSync(password, salt);
+            const hashedPassword: string = bcrypt.hashSync(
+                password, bcrypt.genSaltSync());
             const newUser: HydratedDocument<IUser> = await this._model.create(
                 new UserModel({
                     first_name: req.body.first_name,
@@ -46,7 +46,7 @@ class UserController extends AbstractController {
                     role: req.body.role
                 })
             );
-            
+
             res.status(200).send({
                 status: "Success",
                 message: "User created"
@@ -66,9 +66,10 @@ class UserController extends AbstractController {
                     email: req.body.email,
                 });
             if (!user) throw "Incorrect email/password";
-            
+
             const password: string = req.body.password;
-            const passwordOk = bcrypt.compareSync(password, user.hashed_password);
+            const passwordOk: boolean = bcrypt.compareSync(
+                password, user.hashed_password);
             if (!passwordOk) throw "Incorrect email/password";
 
             res.status(200).send({
