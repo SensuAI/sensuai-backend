@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import AbstractController from "./AbstractController";
 import { HydratedDocument, Model } from "mongoose";
 import bcrypt from "bcryptjs";
-import { IUser, UserModel } from "../models/User";
+import { IUser, Roles, UserModel } from "../models/User";
 // Models
 
 class UserController extends AbstractController {
@@ -35,6 +35,7 @@ class UserController extends AbstractController {
         this.router.post("/signup", this.signup.bind(this));
         this.router.post("/signin", this.signin.bind(this));
         this.router.post("/changePassword", this.changePassword.bind(this));
+        this.router.get("/getAllManagers", this.getAllManagers.bind(this));
     }
 
     /* Routes Methods */
@@ -105,6 +106,27 @@ class UserController extends AbstractController {
             res.status(200).send({
                 status: "Success",
                 message: "Password changed"
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
+    private async getAllManagers(_req: Request, res: Response): Promise<void> {
+        try {
+            const managers: Array<IUser> = await this._model.find(
+                { role: Roles.MANAGER },
+                "-hashed_password"  // Do not send the hashed password
+            );
+            res.status(200).send({
+                status: "Success",
+                results: managers.length,
+                data: {
+                    managers: managers
+                }
             });
         } catch (errorMessage) {
             res.status(400).send({
