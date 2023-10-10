@@ -1,10 +1,12 @@
+import { IUser, Roles } from "../../models/User";
+
 describe("SignupTest", () => {
     const user = {
         first_name: "first name",
         last_name: "last name",
         email: "user@oxxogas.com",
         password: "ciscocompa55",
-        role: "ADMIN"
+        role: Roles.ADMIN
     };
 
     it("Success", async () => {
@@ -35,7 +37,7 @@ describe("LoginTest", () => {
         last_name: "last name",
         email: "user@oxxogas.com",
         password: "ciscocompa55",
-        role: "ADMIN"
+        role: Roles.ADMIN
     };
 
     it("Success", async () => {
@@ -81,7 +83,7 @@ describe("ChangePasswordTest", () => {
         last_name: "last name",
         email: "user@oxxogas.com",
         password: "ciscocompa55",
-        role: "ADMIN"
+        role: Roles.ADMIN
     };
 
     it("Success", async () => {
@@ -134,5 +136,47 @@ describe("ChangePasswordTest", () => {
         expect(result.status).toEqual(400);
         expect(result.body.status).toEqual("Fail");
         expect(result.body.message).toEqual("Incorrect email/password");
+    });
+});
+
+describe("ManagerTest", () => {
+    const manager1 = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "manager1@oxxogas.com",
+        role: Roles.MANAGER
+    };
+    const manager2 = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "manager2@oxxogas.com",
+        role: Roles.MANAGER
+    };
+    it("RetrievesAllManagers", async () => {
+        // Create the managers
+        await testRequest.post("/user/signup").send({
+            ...manager1,
+            password: "ciscoenpa55"
+        });
+        await testRequest.post("/user/signup").send({
+            ...manager2,
+            password: "ciscoenpa55"
+        });
+
+        const result = await testRequest.get("/user/getAllManagers");
+        console.log(result.body)
+        expect(result.status).toEqual(200);
+        expect(result.body.status).toEqual("Success");
+        expect(result.body.results).toEqual(2);
+
+        expect(result.body).toHaveProperty("data.managers");
+        const managers: Array<IUser> = result.body.data.managers;
+        expect(managers.length).toEqual(2);
+
+        // Contains both managers
+        expect(managers.some(
+            manager => manager.email === manager1.email)).toBe(true);
+        expect(managers.some(
+            manager => manager.email === manager2.email)).toBe(true);
     });
 });
