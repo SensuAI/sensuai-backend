@@ -52,7 +52,6 @@ class Server {
             .connect(mongodbUri, {})
             .then(() => {
                 console.log("Successfully connected to MongoDB");
-                console.log(`MongoDB URI: ${mongodbUri}`); 
             })
             .catch((e) => {
                 console.log(e);

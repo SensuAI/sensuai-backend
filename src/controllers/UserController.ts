@@ -18,16 +18,24 @@ class UserController extends AbstractController {
         return this.instance;
     }
 
-    private async login(email: string, password: string): Promise<boolean> {
+    private async login(email: string, password: string): Promise<IUser | null> {
         const user: HydratedDocument<IUser> | null =
             await this._model.findOne({
                 email: email,
             });
-        if (!user) return false;
+        if (!user) return null;
 
         const passwordOk: boolean = bcrypt.compareSync(
             password, user.hashed_password);
-        return passwordOk;
+
+        if (!passwordOk) return null;
+        // Get the user data without password
+        const userWithoutPassword: HydratedDocument<IUser> | null =
+            await this._model.findOne(
+                { email: email },
+                "-hashed_password"
+            );
+        return userWithoutPassword;
     }
 
     /* Routes definition and configuration */
@@ -75,12 +83,15 @@ class UserController extends AbstractController {
 
     private async signin(req: Request, res: Response): Promise<void> {
         try {
-            const loginOk: boolean = await this.login(
+            const user: IUser | null = await this.login(
                 req.body.email, req.body.password);
-            if (!loginOk) throw "Incorrect email/password";
+            if (!user) throw "Incorrect email/password";
             res.status(200).send({
                 status: "Success",
-                message: "The user was found"
+                message: "The user was found",
+                data: {
+                    user: user
+                }
             });
         } catch (errorMessage) {
             res.status(400).send({
@@ -92,13 +103,13 @@ class UserController extends AbstractController {
 
     private async changePassword(req: Request, res: Response): Promise<void> {
         try {
-            const loginOk: boolean = await this.login(
+            const user: IUser | null = await this.login(
                 req.body.email, req.body.password);
-            if (!loginOk) throw "Incorrect email/password";
+            if (!user) throw "Incorrect email/password";
             const newPassword: string = req.body.new_password;
             const newHashedPassword: string = bcrypt.hashSync(
                 newPassword, bcrypt.genSaltSync());
-            const user: IUser | null = await this._model.findOneAndUpdate(
+            const newUser: IUser | null = await this._model.findOneAndUpdate(
                 { email: req.body.email },
                 { $set: { hashed_password: newHashedPassword } },
                 { new: true }
