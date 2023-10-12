@@ -38,6 +38,19 @@ describe("CreateBranchTest", () => {
         expect(result.body.message).toEqual("Branch created");
         expect(result.body.data).toHaveProperty("branch");
     });
+
+    it("TryToCreateBranchWithoutManager", async () => {
+        const managerObjectId = new mongoose.Types.ObjectId();
+        const idManager = managerObjectId.toString();
+        // Create branch
+        const result = await testRequest.post("/branch/create").send({
+            ...branch,
+            id_manager: idManager
+        });
+        expect(result.status).toEqual(400);
+        expect(result.body.status).toEqual("Fail");
+        expect(result.body.message).toEqual("Manager does not exist");
+    });
 });
 
 describe("ChangeManagerTest", () => {
