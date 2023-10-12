@@ -3,6 +3,14 @@ import { Roles } from "../../models/User";
 import { IBranch } from "../../models/branch";
 
 describe("CreateBranchTest", () => {
+    const user = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "user@oxxogas.com",
+        password: "ciscocompa55",
+        role: Roles.MANAGER
+    };
+
     const branch = {
         name: "My branch",
         state: "Mexico",
@@ -13,7 +21,18 @@ describe("CreateBranchTest", () => {
     };
 
     it("Success", async () => {
-        const result = await testRequest.post("/branch/create").send(branch);
+        // Create manager
+        await testRequest.post("/user/signup").send(user);
+        const signinResult = await testRequest.post("/user/signin").send({
+            email: user.email,
+            password: user.password
+        });
+        const idManager = signinResult.body.data.user._id;
+        // Create branch
+        const result = await testRequest.post("/branch/create").send({
+            ...branch,
+            id_manager: idManager
+        });
         expect(result.status).toEqual(200);
         expect(result.body.status).toEqual("Success");
         expect(result.body.message).toEqual("Branch created");
@@ -29,6 +48,13 @@ describe("ChangeManagerTest", () => {
         password: "ciscocompa55",
         role: Roles.MANAGER
     };
+    const user2 = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "user2@oxxogas.com",
+        password: "ciscocompa55",
+        role: Roles.MANAGER
+    };
     const branch = {
         name: "My branch",
         state: "Mexico",
@@ -39,44 +65,64 @@ describe("ChangeManagerTest", () => {
     };
 
     it("Success", async () => {
-        // Crate the branch
-        const createBranchResult = await testRequest
-            .post("/branch/create").send(branch);
-        const branchId = createBranchResult.body.data.branch._id;
-        // Create the manager
+        // Create manager
         await testRequest.post("/user/signup").send(user);
         const signinResult = await testRequest.post("/user/signin").send({
             email: user.email,
             password: user.password
         });
-        const managerId = signinResult.body.data.user._id;
+        const idManager = signinResult.body.data.user._id;
+        // Crate the branch
+        const createBranchResult = await testRequest
+            .post("/branch/create").send({
+                ...branch,
+                id_manager: idManager
+            });
+        const branchId = createBranchResult.body.data.branch._id;
+        // Create the new manager
+        await testRequest.post("/user/signup").send(user2);
+        const signinResult2 = await testRequest.post("/user/signin").send({
+            email: user2.email,
+            password: user2.password
+        });
+        const idNewManager = signinResult.body.data.user._id;
         // Change the manager
         const result = await testRequest
             .post(`/branch/${branchId}/changeManager`).send({
-                id_manager: managerId
+                id_manager: idNewManager
             });
         expect(result.status).toEqual(200);
         expect(result.body.status).toEqual("Success");
         expect(result.body.message).toEqual("The manager was changed");
         expect(result.body.data).toHaveProperty("branch");
         const newBranch = result.body.data.branch;
-        expect(newBranch.id_manager).toEqual(managerId);
+        expect(newBranch.id_manager).toEqual(idNewManager);
     });
 
     it("TryToAssignUnexistentManager", async () => {
+        // Create manager
+        await testRequest.post("/user/signup").send(user);
+        const signinResult = await testRequest.post("/user/signin").send({
+            email: user.email,
+            password: user.password
+        });
+        const idManager = signinResult.body.data.user._id;
         // Crate the branch
         const createBranchResult = await testRequest
-            .post("/branch/create").send(branch);
+            .post("/branch/create").send({
+                ...branch,
+                id_manager: idManager
+            });
         const branchId = createBranchResult.body.data.branch._id;
 
         // Id of manager not existent in database
         const managerObjectId = new mongoose.Types.ObjectId();
-        const managerId = managerObjectId.toString();
+        const idNewManager = managerObjectId.toString();
 
         // Change the manager
         const result = await testRequest
             .post(`/branch/${branchId}/changeManager`).send({
-                id_manager: managerId
+                id_manager: idNewManager
             });
         expect(result.status).toEqual(400);
         expect(result.body.status).toEqual("Fail");
@@ -85,6 +131,13 @@ describe("ChangeManagerTest", () => {
 });
 
 describe("GetAllBranchesTest", () => {
+    const user = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "user@oxxogas.com",
+        password: "ciscocompa55",
+        role: Roles.MANAGER
+    };
     const branch1 = {
         name: "Branch 1",
         state: "Mexico",
@@ -102,9 +155,23 @@ describe("GetAllBranchesTest", () => {
         phone: "1111111111"
     };
     it("Success", async () => {
+        // Create manager
+        await testRequest.post("/user/signup").send(user);
+        const signinResult = await testRequest.post("/user/signin").send({
+            email: user.email,
+            password: user.password
+        });
+        const idManager = signinResult.body.data.user._id;
+
         // Create the branches
-        await testRequest.post("/branch/create").send(branch1);
-        await testRequest.post("/branch/create").send(branch2);
+        await testRequest.post("/branch/create").send({
+            ...branch1,
+            id_manager: idManager
+        });
+        await testRequest.post("/branch/create").send({
+            ...branch2,
+            id_manager: idManager
+        });
 
         const result = await testRequest.get("/branch/getAll");
         expect(result.status).toEqual(200);

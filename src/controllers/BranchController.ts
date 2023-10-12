@@ -27,9 +27,21 @@ class BranchController extends AbstractController {
     /* Routes Methods */
     private async createBranch(req: Request, res: Response): Promise<void> {
         try {
+            // Verify manager
+            const idManager = req.body.id_manager;
+            const manager: HydratedDocument<IUser> | null = await UserModel
+                .findById(idManager);
+            if (!manager) throw "Manager does not exist";
+
             const newBranch: HydratedDocument<IBranch> = await this._model.create(
                 new BranchModel({
-                    ...req.body
+                    name: req.body.name,
+                    state: req.body.state,
+                    city: req.body.city,
+                    street: req.body.street,
+                    postal_code: req.body.postal_code,
+                    phone: req.body.phone,
+                    id_manager: new mongoose.Types.ObjectId(idManager)
                 })
             );
 
