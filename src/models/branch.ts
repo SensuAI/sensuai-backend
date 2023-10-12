@@ -17,7 +17,7 @@ export const BranchSchema = new Schema<IBranch>({
     street: {type: String, required: true},
     postal_code: {type: String, required: true},
     phone: {type: String, required: true},
-    id_manager: {type: Schema.Types.ObjectId, required: false, ref: 'User' },
+    id_manager: {type: Schema.Types.ObjectId, required: true, ref: 'User' },
 });
 
 export const BranchModel = model<IBranch>("Branch", BranchSchema);

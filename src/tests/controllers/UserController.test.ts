@@ -50,6 +50,13 @@ describe("LoginTest", () => {
         expect(result.status).toEqual(200);
         expect(result.body.status).toEqual("Success");
         expect(result.body.message).toEqual("The user was found");
+        expect(result.body.data).toHaveProperty("user");
+        
+        // User data returned from the login must contain the id
+        // but not the hashed password.
+        const receivedUser = result.body.data.user;
+        expect(receivedUser).toHaveProperty("_id");
+        expect(receivedUser).not.toHaveProperty("hashed_password");
     });
 
     it("IncorrectEmailFailure", async () => {
@@ -164,7 +171,6 @@ describe("ManagerTest", () => {
         });
 
         const result = await testRequest.get("/user/getAllManagers");
-        console.log(result.body)
         expect(result.status).toEqual(200);
         expect(result.body.status).toEqual("Success");
         expect(result.body.results).toEqual(2);

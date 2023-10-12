@@ -8,6 +8,7 @@ import cors from "cors";
 import UserController from "../controllers/UserController";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
+import BranchController from "../controllers/BranchController";
 let server: Server;
 let mongodb: MongoMemoryServer;
 
@@ -35,7 +36,8 @@ beforeAll(async () => {
       cors(),
     ],
     controllers: [
-      UserController.getInstance()
+      UserController.getInstance(),
+      BranchController.getInstance()
     ],
     env: "development"
   });
