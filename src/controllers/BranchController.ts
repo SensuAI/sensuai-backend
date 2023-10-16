@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import AbstractController from "./AbstractController";
 import mongoose, { HydratedDocument, Model } from "mongoose";
-import { BranchModel, IBranch } from "../models/Branch";
+import { BranchModel, IBranch } from "../models/branch";
 import { IUser, UserModel } from "../models/User";
 
 class BranchController extends AbstractController {

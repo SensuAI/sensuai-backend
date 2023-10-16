@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Roles } from "../../models/User";
-import { IBranch } from "../../models/Branch";
+import { IBranch } from "../../models/branch";
 
 describe("CreateBranchTest", () => {
     const user = {
