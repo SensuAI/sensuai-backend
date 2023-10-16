@@ -9,6 +9,7 @@ import UserController from "../controllers/UserController";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import BranchController from "../controllers/BranchController";
+import CarPlatesController from "../controllers/CarPlatesController";
 let server: Server;
 let mongodb: MongoMemoryServer;
 
@@ -37,7 +38,8 @@ beforeAll(async () => {
     ],
     controllers: [
       UserController.getInstance(),
-      BranchController.getInstance()
+      BranchController.getInstance(),
+      CarPlatesController.getInstance()
     ],
     env: "development"
   });
