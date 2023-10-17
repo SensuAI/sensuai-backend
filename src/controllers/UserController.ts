@@ -41,12 +41,54 @@ class UserController extends AbstractController {
     /* Routes definition and configuration */
     protected initRoutes(): void {
         this.router.post("/signup", this.signup.bind(this));
+        this.router.post("/signupMany", this.signupMany.bind(this));
         this.router.post("/signin", this.signin.bind(this));
         this.router.post("/changePassword", this.changePassword.bind(this));
         this.router.get("/getAllManagers", this.getAllManagers.bind(this));
     }
 
     /* Routes Methods */
+    private async signupMany(req: Request, res: Response): Promise<void> {
+        try {
+            const users = req.body.users
+            let resultUsers: Array<IUser> = [];
+            for (const user of users) {
+                // Verify if the email is already in use
+                const userDocument: HydratedDocument<IUser> | null =
+                await this._model.findOne({
+                    email: user.email
+                });
+                if (userDocument) throw "One of the emails is already in use";
+            }
+            for (const user of users) {
+                const password: string = user.password;
+                const hashedPassword: string = bcrypt.hashSync(
+                    password, bcrypt.genSaltSync());
+                const newUser: HydratedDocument<IUser> = await this._model.create(
+                    new UserModel({
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        hashed_password: hashedPassword,
+                        role: user.role
+                    })
+                );
+                resultUsers.push(newUser);
+            }
+
+            res.status(200).send({
+                status: "Success",
+                message: "Users created",
+                results: resultUsers.length
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage,
+            });
+        }
+    }
+
     private async signup(req: Request, res: Response): Promise<void> {
         try {
             // Verify if the email is already in use
