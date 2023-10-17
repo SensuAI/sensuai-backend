@@ -18,11 +18,41 @@ class CarPlatesController extends AbstractController {
 
     /* Routes definition and configuration */
     protected initRoutes(): void {
-        this.router.post("/register", this.registerCarPlate.bind(this));
+        this.router.post("/register", this.registerManyCarPlates.bind(this));
+        this.router.post("/registerOne", this.registerCarPlate.bind(this));
         this.router.get("/getAll", this.getAllCarPlates.bind(this));
     }
 
     /* Routes Methods */
+    private async registerManyCarPlates(req: Request, res: Response): Promise<void> {
+        try {
+            const carPlates: Array<ICarPlate> = req.body.plates
+            let resultCarPlates: Array<ICarPlate> = [];
+            for (const carPlate of carPlates) {
+                const newCarPlate: HydratedDocument<ICarPlate> = await this._model.create(
+                    new CarPlateModel({
+                        ...carPlate
+                    })
+                );
+                resultCarPlates.push(newCarPlate);
+            }
+
+            res.status(200).send({
+                status: "Success",
+                message: "Car plates created",
+                results: resultCarPlates.length,
+                data: {
+                    carPlates: resultCarPlates
+                }
+            })
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
     private async registerCarPlate(req: Request, res: Response): Promise<void> {
         try {
             const newCarPlate: HydratedDocument<ICarPlate> = await this._model.create(
