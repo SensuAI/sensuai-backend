@@ -31,6 +31,55 @@ describe("SignupTest", () => {
     });
 });
 
+describe("SignupTestMultiple", () => {
+    const user1 = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "user@oxxogas.com",
+        password: "ciscocompa55",
+        role: Roles.ADMIN
+    };
+    const user2 = {
+        first_name: "first name",
+        last_name: "last name",
+        email: "manager@oxxogas.com",
+        password: "ciscoenpa55",
+        role: Roles.MANAGER
+    };
+
+    it("Success", async () => {
+        const result = await testRequest.post("/user/signupMany").send({
+            users: [
+                user1,
+                user2
+            ]
+        });
+        expect(result.status).toEqual(200);
+        expect(result.body.status).toEqual("Success");
+        expect(result.body.message).toEqual("Users created");
+        expect(result.body.results).toEqual(2);
+    });
+
+    it("ExistentEmailFailure", async () => {
+        // Create the user for the first time
+        const result = await testRequest.post("/user/signup").send(user1);
+        expect(result.status).toEqual(200);
+        expect(result.body.status).toEqual("Success");
+        expect(result.body.message).toEqual("User created");
+
+        // Attemps to create the user again (rejected by same email)
+        const result2 = await testRequest.post("/user/signupMany").send({
+            users: [
+                user2,
+                user1
+            ]
+        });
+        expect(result2.status).toEqual(400);
+        expect(result2.body.status).toEqual("Fail");
+        expect(result2.body.message).toEqual("One of the emails is already in use");
+    });
+});
+
 describe("LoginTest", () => {
     const user = {
         first_name: "first name",
