@@ -21,6 +21,7 @@ class CarPlatesController extends AbstractController {
         this.router.post("/register", this.registerManyCarPlates.bind(this));
         this.router.post("/registerOne", this.registerCarPlate.bind(this));
         this.router.get("/getAll", this.getAllCarPlates.bind(this));
+        this.router.get("/:plate", this.getCarPlate.bind(this));
     }
 
     /* Routes Methods */
@@ -84,6 +85,27 @@ class CarPlatesController extends AbstractController {
                 results: carPlates.length,
                 data: {
                     carPlates: carPlates
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
+    private async getCarPlate(req: Request, res: Response): Promise<void> {
+        try {
+            const carPlate: HydratedDocument<ICarPlate> | null = await this._model.findOne({
+                plate: req.params.plate
+            });
+            if (!carPlate) throw "Car plate does not exist";
+
+            res.status(200).send({
+                status: "Success",
+                data: {
+                    carPlate: carPlate
                 }
             });
         } catch (errorMessage) {
