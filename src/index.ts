@@ -5,6 +5,7 @@ import cors from 'cors';
 import UserController from "./controllers/UserController";
 import BranchController from "./controllers/BranchController";
 import CarPlatesController from "./controllers/CarPlatesController";
+import TransactionController from "./controllers/TransactionController";
 
 const app = new Server({
     port:PORT,
@@ -16,7 +17,8 @@ const app = new Server({
     controllers:[
         UserController.getInstance(),
         BranchController.getInstance(),
-        CarPlatesController.getInstance()
+        CarPlatesController.getInstance(),
+        TransactionController.getInstance()
     ],
     env:NODE_ENV
 });

@@ -35,14 +35,14 @@ describe("CreateCarPlateTest", () => {
     });
 });
 
-describe("GetAllCarPlatesTest", () => {
+describe("GetCarPlatesTest", () => {
     const plate1 = {
         plate: "abc-123"
     };
     const plate2 = {
         plate: "def-456"
     };
-    it("Success", async () => {
+    it("GetAllCarPlatesSuccess", async () => {
         // Create the plates
         await testRequest.post("/plate/registerOne").send(plate1);
         await testRequest.post("/plate/registerOne").send(plate2);
@@ -61,5 +61,22 @@ describe("GetAllCarPlatesTest", () => {
             plate => plate.plate === plate1.plate)).toBe(true);
         expect(carPlates.some(
             plate => plate.plate === plate1.plate)).toBe(true);
+    });
+    it("GetOneCarPlateSuccess", async () => {
+        // Create the plate
+        await testRequest.post("/plate/registerOne").send(plate1);
+
+        const result = await testRequest.get(`/plate/${plate1.plate}`);
+        expect(result.status).toEqual(200);
+        expect(result.body.status).toEqual("Success");
+        expect(result.body.data).toHaveProperty("carPlate");
+        const resultPlate = result.body.data.carPlate;
+        expect(resultPlate.plate).toEqual(plate1.plate);
+    });
+    it("GetOneCarPlateFailure", async () => {
+        const result = await testRequest.get(`/plate/${plate1.plate}`);
+        expect(result.status).toEqual(400);
+        expect(result.body.status).toEqual("Fail");
+        expect(result.body.message).toEqual("Car plate does not exist");
     });
 });
