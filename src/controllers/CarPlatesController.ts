@@ -79,7 +79,8 @@ class CarPlatesController extends AbstractController {
 
     private async getAllCarPlates(_req: Request, res: Response): Promise<void> {
         try {
-            const carPlates: Array<ICarPlate> = await this._model.find({});
+            const carPlates: Array<ICarPlate> = await this._model.find({})
+                .populate("transactions");
             res.status(200).send({
                 status: "Success",
                 results: carPlates.length,
@@ -99,7 +100,7 @@ class CarPlatesController extends AbstractController {
         try {
             const carPlate: HydratedDocument<ICarPlate> | null = await this._model.findOne({
                 plate: req.params.plate
-            });
+            }).populate("transactions");
             if (!carPlate) throw "Car plate does not exist";
 
             res.status(200).send({
