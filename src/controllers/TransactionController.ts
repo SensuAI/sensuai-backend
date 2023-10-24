@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import AbstractController from "./AbstractController";
-import { HydratedDocument, Model } from "mongoose";
-import { ITransaction, TransactionModel } from "../models/Transaction";
+import { Aggregate, HydratedDocument, Model } from "mongoose";
+import { ITransaction, PaymentMethods, TransactionModel } from "../models/Transaction";
 import { CarPlateModel, ICarPlate } from "../models/CarPlates";
+import { IPlateStatistics } from "../models/PlateStatistics";
 
 class TransactionController extends AbstractController {
     /* Attributes */
@@ -22,6 +23,7 @@ class TransactionController extends AbstractController {
         this.router.post("/register", this.registerTransaction.bind(this));
         this.router.post("/registerMany", this.registerManyTransactions.bind(this));
         this.router.get("/getAll", this.getAllTransactions.bind(this));
+        this.router.get("/:plate/statistics", this.getPlateStatistics.bind(this));
     }
 
     /* Routes Methods */
@@ -119,6 +121,68 @@ class TransactionController extends AbstractController {
                 results: transactions.length,
                 data: {
                     transactions: transactions
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
+    private async getPlateStatistics(req: Request, res: Response): Promise<void> {
+        try {
+            const plate: string = req.params.plate;
+            const aggregateResult = await this._model.aggregate([
+                { $match: { plate: plate } },
+                {
+                    $group:
+                    {
+                        _id: "$plate",
+                        total_gas_consumption: {
+                            $sum: "$gas_quantity"
+                        },
+                        transactions_with_additional_services: {
+                            $sum: {
+                                $cond: {
+                                    if: {
+                                        $eq: ["$additional_services", true]
+                                    },
+                                    then: 1,
+                                    else: 0
+                                }
+                            }
+                        },
+                        total_money_spent: {
+                            $sum: "$amount"
+                        },
+                        last_transaction_date: {
+                            $max: "$timestamp"
+                        },
+                        mean_duration_minutes_per_transacction: {
+                            $avg: "$duration_minutes_transaction"
+                        }
+                    }
+                }
+            ]);
+            let statistics: IPlateStatistics = {
+                plate: plate,
+                total_gas_consumption:
+                    aggregateResult[0].total_gas_consumption,
+                transactions_with_additional_services:
+                    aggregateResult[0].transactions_with_additional_services,
+                total_money_spent:
+                    aggregateResult[0].total_money_spent,
+                last_transaction_date:
+                    aggregateResult[0].last_transaction_date,
+                mean_duration_minutes_per_transaction:
+                    aggregateResult[0].mean_duration_minutes_per_transacction
+            };
+            res.status(200).send({
+                status: "Success",
+                data: {
+                    statistics: statistics
                 }
             });
         } catch (errorMessage) {
