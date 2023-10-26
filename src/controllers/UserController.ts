@@ -45,6 +45,7 @@ class UserController extends AbstractController {
         this.router.post("/signin", this.signin.bind(this));
         this.router.post("/changePassword", this.changePassword.bind(this));
         this.router.get("/getAllManagers", this.getAllManagers.bind(this));
+        this.router.get("/:id", this.getName.bind(this));
     }
 
     /* Routes Methods */
@@ -188,6 +189,29 @@ class UserController extends AbstractController {
             });
         }
     }
+
+    private async getName(req: Request, res: Response): Promise<void> {
+        try {
+            const user: HydratedDocument<IUser> | null = await this._model.findOne({
+                _id: req.params.id
+            });
+            if (!user) throw "User does not exist";
+
+            res.status(200).send({
+                status: "Success",
+                data: {
+                    first_name: user.first_name,
+                    last_name: user.last_name
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            })
+        }
+    }
+
 }
 
 export default UserController;
