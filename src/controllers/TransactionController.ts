@@ -20,10 +20,37 @@ class TransactionController extends AbstractController {
 
     /* Routes definition and configuration */
     protected initRoutes(): void {
-        this.router.post("/register", this.registerTransaction.bind(this));
+        this.router.post("/register", this.registerTransactionRequest.bind(this));
         this.router.post("/registerMany", this.registerManyTransactions.bind(this));
         this.router.get("/getAll", this.getAllTransactions.bind(this));
         this.router.get("/:plate/statistics", this.getPlateStatistics.bind(this));
+    }
+
+    public async registerTransaction(
+        transaction: ITransaction): Promise<HydratedDocument<ITransaction>> {
+        const plateId: string = transaction.plate;
+        let plate: HydratedDocument<ICarPlate> | null = await CarPlateModel.findOne({
+            plate: plateId
+        });
+        if (!plate) {
+            plate = await CarPlateModel.create(
+                new CarPlateModel({ plate: plateId })
+            );
+        }
+
+        const newTransaction: HydratedDocument<ITransaction> = await this._model.create(
+            new TransactionModel(transaction)
+        );
+
+        // Register the transaction in the corresponding plate
+        const newCarPlate: HydratedDocument<ICarPlate> | null = await CarPlateModel
+            .findByIdAndUpdate(
+                plate._id,
+                { $push: { transactions: newTransaction._id } },
+                { new: true }
+            );
+
+        return newTransaction;
     }
 
     /* Routes Methods */
@@ -76,33 +103,14 @@ class TransactionController extends AbstractController {
         }
     }
 
-    private async registerTransaction(req: Request, res: Response): Promise<void> {
+    private async registerTransactionRequest(req: Request, res: Response): Promise<void> {
         try {
-            // Verify plate
-            const plateId: string = req.body.plate;
-            const plate: HydratedDocument<ICarPlate> | null = await CarPlateModel.findOne({
-                plate: plateId
-            });
-            if (!plate) throw "Plate does not exist";
-
-            const transaction: HydratedDocument<ITransaction> = await this._model.create(
-                new TransactionModel({
-                    ...req.body
-                })
-            );
-
-            // Register the transaction in the corresponding plate
-            const newTransaction: HydratedDocument<ICarPlate> | null = await CarPlateModel
-                .findByIdAndUpdate(
-                    plate._id,
-                    { $push: { transactions: transaction._id } },
-                    { new: true }
-                );
+            const newTransaction: HydratedDocument<ITransaction> = await this.registerTransaction({...req.body});
             res.status(200).send({
                 status: "Success",
                 message: "Transaction created",
                 data: {
-                    transaction: transaction
+                    transaction: newTransaction
                 }
             });
         } catch (errorMessage) {
