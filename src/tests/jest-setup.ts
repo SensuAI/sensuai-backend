@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import BranchController from "../controllers/BranchController";
 import CarPlatesController from "../controllers/CarPlatesController";
 import TransactionController from "../controllers/TransactionController";
+import ComputerVisionController from "../controllers/ComputerVisionModel";
 let server: Server;
 let mongodb: MongoMemoryServer;
 
@@ -41,7 +42,8 @@ beforeAll(async () => {
       UserController.getInstance(),
       BranchController.getInstance(),
       CarPlatesController.getInstance(),
-      TransactionController.getInstance()
+      TransactionController.getInstance(),
+      ComputerVisionController.getInstance()
     ],
     env: "development"
   });

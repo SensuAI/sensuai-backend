@@ -6,6 +6,7 @@ import UserController from "./controllers/UserController";
 import BranchController from "./controllers/BranchController";
 import CarPlatesController from "./controllers/CarPlatesController";
 import TransactionController from "./controllers/TransactionController";
+import ComputerVisionController from "./controllers/ComputerVisionModel";
 
 const app = new Server({
     port:PORT,
@@ -18,7 +19,8 @@ const app = new Server({
         UserController.getInstance(),
         BranchController.getInstance(),
         CarPlatesController.getInstance(),
-        TransactionController.getInstance()
+        TransactionController.getInstance(),
+        ComputerVisionController.getInstance()
     ],
     env:NODE_ENV
 });

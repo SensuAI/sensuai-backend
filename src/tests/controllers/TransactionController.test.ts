@@ -82,7 +82,7 @@ describe("CreateTransactionTest", () => {
         expect(resultPlate.transactions.length).toEqual(1);
         expect(resultPlate.transactions[0]._id).toEqual(resultTransaction._id);
     });
-    it("PlateDoesNotExistFailure", async () => {
+    it("PlateDoesNotExistSuccess", async () => {
         // Create manager
         await testRequest.post("/user/signup").send(user);
         const signinResult = await testRequest.post("/user/signin").send({
@@ -104,9 +104,19 @@ describe("CreateTransactionTest", () => {
             plate: "DOES-NOT-EXIST"
         });
 
-        expect(result.status).toEqual(400);
-        expect(result.body.status).toEqual("Fail");
-        expect(result.body.message).toEqual("Plate does not exist");
+        expect(result.status).toEqual(200);
+        expect(result.body.status).toEqual("Success");
+        expect(result.body.data).toHaveProperty("transaction");
+
+        const resultTransaction = result.body.data.transaction;
+        
+        // Unexisting plate must have been created
+        // Transaction id must exist in the transaction list of the plate
+        const resultGetPlate = await testRequest.get(`/plate/${"DOES-NOT-EXIST"}`);
+        const resultPlate = resultGetPlate.body.data.carPlate;
+        expect(resultPlate).toHaveProperty("transactions");
+        expect(resultPlate.transactions.length).toEqual(1);
+        expect(resultPlate.transactions[0]._id).toEqual(resultTransaction._id);
     });
     it("SuccessMany", async () => {
         // Create manager
