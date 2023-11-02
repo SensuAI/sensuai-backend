@@ -22,6 +22,7 @@ export interface ITransaction {
     gas_type: "Regular" | "Premium" | "Diesel";
     gas_quantity: number;
     additional_services?: boolean;
+    vehicule_type?: string;
 };
 
 export const TransactionSchema = new Schema<ITransaction>({
@@ -33,7 +34,8 @@ export const TransactionSchema = new Schema<ITransaction>({
     amount: {type: Number, required: true},
     gas_type: {type: String, enum: ["Regular", "Premium", "Diesel"], required: true},
     gas_quantity: {type: Number, required: true},
-    additional_services: {type: Boolean, required: false}
+    additional_services: {type: Boolean, required: false},
+    vehicule_type: {type: String, required: false}
 });
 
 export const TransactionModel = model<ITransaction>("Transaction", TransactionSchema);

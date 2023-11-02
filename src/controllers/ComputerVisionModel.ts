@@ -45,7 +45,8 @@ class ComputerVisionController extends AbstractController {
                     amount: liters * 22.3,
                     gas_type: GasTypes.Regular,
                     gas_quantity: liters,
-                    additional_services: false
+                    additional_services: false,
+                    vehicule_type: "Car"
                 })
             );
 
