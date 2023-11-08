@@ -22,6 +22,7 @@ class CarPlatesController extends AbstractController {
         this.router.post("/registerOne", this.registerCarPlate.bind(this));
         this.router.get("/getAll", this.getAllCarPlates.bind(this));
         this.router.get("/:plate", this.getCarPlate.bind(this));
+        this.router.post("/assignUser", this.assignUser.bind(this));
     }
 
     /* Routes Methods */
@@ -116,6 +117,36 @@ class CarPlatesController extends AbstractController {
             });
         }
     }
+
+    private async assignUser(req: Request, res: Response): Promise<void> {
+        try {
+            const carPlate: HydratedDocument<ICarPlate> | null = await this._model.findOne({
+                plate: req.body.plate
+            });
+            if (!carPlate) throw "Car plate does not exist";
+
+            const newCarPlate: HydratedDocument<ICarPlate> | null = await this._model
+                .findByIdAndUpdate(
+                    carPlate._id,
+                    { $set: { username: req.body.username } },
+                    { new: true }
+                );
+
+            res.status(200).send({
+                status: "Success",
+                message: "User assigned",
+                data: {
+                    carPlate: newCarPlate
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage,
+            });
+        }
+    }
+
 }
 
 export default CarPlatesController;
