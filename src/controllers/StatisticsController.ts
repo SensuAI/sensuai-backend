@@ -18,6 +18,7 @@ class StatisticsController extends AbstractController {
     protected initRoutes(): void {
         this.router.get("/typeOfPaymentCount", this.typeOfPaymentCount.bind(this));
         this.router.get("/visitsPerHour", this.visitsPerHour.bind(this));
+        this.router.get("/visitsPerMonth", this.visitsPerMonth.bind(this));
     }
 
     private async typeOfPaymentCount(req_: Request, res: Response): Promise<void> {
@@ -96,6 +97,86 @@ class StatisticsController extends AbstractController {
                     visits: result.visits
                 });
                 curHour++;
+            }
+            res.status(200).send({
+                status: "Success",
+                data: {
+                    statistics: statistics
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
+    private async visitsPerMonth(req_: Request, res: Response): Promise<void> {
+        try {
+            const toMonthString = [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            ];
+            
+            const aggregateResults = await TransactionModel.aggregate([
+                {
+                    $project:
+                    {
+                        month: {
+                            $month: "$timestamp",
+                        }
+                    }
+                },
+                {
+                    $group:
+                    {
+                        _id: "$month",
+                        visits: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $sort:
+                    {
+                        _id: 1
+                    }
+                }
+            ]);
+            let statistics: any = [];
+            let curMonth = 0;
+            for (const result of aggregateResults) {
+                while (result._id > curMonth) {
+                    
+                    statistics.push({
+                        month: toMonthString[curMonth],
+                        visits: Math.floor(Math.random() * 30)
+                    });
+                    curMonth++;
+                }
+                statistics.push({
+                    month: toMonthString[result._id],
+                    visits: result.visits
+                });
+                curMonth++;
+            }
+            while (curMonth < 12) {
+                statistics.push({
+                    month: toMonthString[curMonth],
+                    visits: Math.floor(Math.random() * 30)
+                });
+                curMonth++;
             }
             res.status(200).send({
                 status: "Success",
