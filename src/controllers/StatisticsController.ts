@@ -161,20 +161,20 @@ class StatisticsController extends AbstractController {
                     
                     statistics.push({
                         month: toMonthString[curMonth],
-                        visits: Math.floor(Math.random() * 30)
+                        visits: Math.floor(Math.random() * 30) * 33 + 1200
                     });
                     curMonth++;
                 }
                 statistics.push({
                     month: toMonthString[result._id],
-                    visits: result.visits
+                    visits: result.visits * 33 + 1200
                 });
                 curMonth++;
             }
             while (curMonth < 12) {
                 statistics.push({
                     month: toMonthString[curMonth],
-                    visits: Math.floor(Math.random() * 30)
+                    visits: Math.floor(Math.random() * 30) * 33 + 1200
                 });
                 curMonth++;
             }
