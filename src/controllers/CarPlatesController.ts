@@ -128,7 +128,7 @@ class CarPlatesController extends AbstractController {
 
             const newCarPlate: HydratedDocument<ICarPlate> | null = await this._model
                 .findOneAndUpdate(
-                    { plate: req.body.plate},
+                    { plate: req.body.plate } ,
                     { $set: { username: req.body.username } },
                     { new: true }
                 );
