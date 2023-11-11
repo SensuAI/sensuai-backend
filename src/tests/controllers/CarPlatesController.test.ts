@@ -80,3 +80,22 @@ describe("GetCarPlatesTest", () => {
         expect(result.body.message).toEqual("Car plate does not exist");
     });
 });
+
+describe("AssignCarPlateTest", () => {
+    const plate1 = {
+        plate: "abc-123"
+    };
+
+    it("Success", async () => {
+        await testRequest.post("/plate/registerOne").send(plate1);
+        const result = await testRequest.post("/plate/assignUser").send({
+            plate: plate1.plate,
+            username: "NewUsername"
+        });
+        expect(result.status).toEqual(200);
+        expect(result.body.status).toEqual("Success");
+        const plate_result = await testRequest.get(`/plate/${plate1.plate}`);
+        expect(plate_result.body.data.carPlate.plate).toEqual(plate1.plate);
+        expect(plate_result.body.data.carPlate.username).toEqual("NewUsername");
+    });
+});

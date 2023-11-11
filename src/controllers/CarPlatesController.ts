@@ -124,10 +124,11 @@ class CarPlatesController extends AbstractController {
                 plate: req.body.plate
             });
             if (!carPlate) throw "Car plate does not exist";
+            if (carPlate.username) throw "Car plate already has a user assigned";
 
             const newCarPlate: HydratedDocument<ICarPlate> | null = await this._model
-                .findByIdAndUpdate(
-                    carPlate._id,
+                .findOneAndUpdate(
+                    { plate: req.body.plate } ,
                     { $set: { username: req.body.username } },
                     { new: true }
                 );
@@ -135,10 +136,8 @@ class CarPlatesController extends AbstractController {
             res.status(200).send({
                 status: "Success",
                 message: "User assigned",
-                data: {
-                    carPlate: newCarPlate
-                }
             });
+
         } catch (errorMessage) {
             res.status(400).send({
                 status: "Fail",
