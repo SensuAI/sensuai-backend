@@ -17,6 +17,7 @@ class StatisticsController extends AbstractController {
     /* Routes definition and configuration */
     protected initRoutes(): void {
         this.router.get("/typeOfPaymentCount", this.typeOfPaymentCount.bind(this));
+        this.router.get("/visitsPerHour", this.visitsPerHour.bind(this));
     }
 
     private async typeOfPaymentCount(req_: Request, res: Response): Promise<void> {
@@ -38,6 +39,63 @@ class StatisticsController extends AbstractController {
                     name: result._id,
                     count: result.count
                 });
+            }
+            res.status(200).send({
+                status: "Success",
+                data: {
+                    statistics: statistics
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
+    private async visitsPerHour(req_: Request, res: Response): Promise<void> {
+        try {
+            const aggregateResults = await TransactionModel.aggregate([
+                {
+                    $project:
+                    {
+                        time: {
+                            $hour: "$timestamp",
+                        }
+                    }
+                },
+                {
+                    $group:
+                    {
+                        _id: "$time",
+                        visits: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $sort:
+                    {
+                        _id: 1
+                    }
+                }
+            ]);
+            let statistics: any = [];
+            let curHour = 0;
+            for (const result of aggregateResults) {
+                while (result._id > curHour) {
+                    statistics.push({
+                        time: curHour,
+                        visits: 0
+                    });
+                    curHour++;
+                }
+                statistics.push({
+                    time: result._id,
+                    visits: result.visits
+                });
+                curHour++;
             }
             res.status(200).send({
                 status: "Success",
