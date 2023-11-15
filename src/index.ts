@@ -8,6 +8,7 @@ import CarPlatesController from "./controllers/CarPlatesController";
 import TransactionController from "./controllers/TransactionController";
 import ComputerVisionController from "./controllers/ComputerVisionModel";
 import StatisticsController from "./controllers/StatisticsController";
+import BranchStatisticsController from "./controllers/BranchStatisticsController";
 
 const app = new Server({
     port:PORT,
@@ -22,7 +23,8 @@ const app = new Server({
         CarPlatesController.getInstance(),
         TransactionController.getInstance(),
         ComputerVisionController.getInstance(),
-        StatisticsController.getInstance()
+        StatisticsController.getInstance(),
+        BranchStatisticsController.getInstance()
     ],
     env:NODE_ENV
 });
