@@ -336,17 +336,29 @@ class StatisticsController extends AbstractController {
             const currentDate = new Date();
             const oneWeekAgo = new Date(currentDate.getTime());
             oneWeekAgo.setDate(oneWeekAgo.getDate() - oneWeekAgo.getDay());
-            const twoWeeksAgo = new Date(currentDate.getTime() - (14 * 24 * 60 * 60 * 1000));
+            const twoWeeksAgo = new Date(currentDate.getTime() - (7 * 24 * 60 * 60 * 1000));
             twoWeeksAgo.setDate(twoWeeksAgo.getDate() - twoWeeksAgo.getDay());
-            const threeWeeksAgo = new Date(currentDate.getTime() - (21 * 24 * 60 * 60 * 1000));
+            const threeWeeksAgo = new Date(currentDate.getTime() - (14 * 24 * 60 * 60 * 1000));
             threeWeeksAgo.setDate(threeWeeksAgo.getDate() - threeWeeksAgo.getDay());
             res.status(200).send({
                 status: "Success",
                 data: {
-                    dates: [
-                        oneWeekAgo.toDateString(),
-                        twoWeeksAgo.toDateString(),
-                        threeWeeksAgo.toDateString(),
+                    transAndIncome: [
+                        {
+                            last_visited: oneWeekAgo.toDateString(),
+                            amount: Math.floor(Math.random() * 30) * 33 + 1200,
+                            time: Math.floor(Math.random() * 12) + 2
+                        },
+                        {
+                            last_visited: twoWeeksAgo.toDateString(),
+                            amount: Math.floor(Math.random() * 30) * 33 + 1200,
+                            time: Math.floor(Math.random() * 12) + 2
+                        },
+                        {
+                            last_visited: threeWeeksAgo.toDateString(),
+                            amount: Math.floor(Math.random() * 30) * 33 + 1200,
+                            time: Math.floor(Math.random() * 12) + 2
+                        }
                     ]
                 }
             });
