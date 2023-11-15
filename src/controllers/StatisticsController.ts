@@ -21,6 +21,7 @@ class StatisticsController extends AbstractController {
         this.router.get("/visitsPerMonth", this.visitsPerMonth.bind(this));
         this.router.get("/meanTransactionTimePerMonth", this.meanTransactionTimePerMonth.bind(this));
         this.router.get("/incomePerHour", this.incomePerHour.bind(this));
+        this.router.get("/weeklyStatistics", this.lastThreeWeeks.bind(this));
     }
 
     private async typeOfPaymentCount(req_: Request, res: Response): Promise<void> {
@@ -320,6 +321,33 @@ class StatisticsController extends AbstractController {
                 status: "Success",
                 data: {
                     statistics: statistics
+                }
+            });
+        } catch (errorMessage) {
+            res.status(400).send({
+                status: "Fail",
+                message: errorMessage
+            });
+        }
+    }
+
+    private async lastThreeWeeks(req_: Request, res: Response): Promise<void> {
+        try {
+            const currentDate = new Date();
+            const oneWeekAgo = new Date(currentDate.getTime());
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - oneWeekAgo.getDay());
+            const twoWeeksAgo = new Date(currentDate.getTime() - (14 * 24 * 60 * 60 * 1000));
+            twoWeeksAgo.setDate(twoWeeksAgo.getDate() - twoWeeksAgo.getDay());
+            const threeWeeksAgo = new Date(currentDate.getTime() - (21 * 24 * 60 * 60 * 1000));
+            threeWeeksAgo.setDate(threeWeeksAgo.getDate() - threeWeeksAgo.getDay());
+            res.status(200).send({
+                status: "Success",
+                data: {
+                    dates: [
+                        oneWeekAgo.toDateString(),
+                        twoWeeksAgo.toDateString(),
+                        threeWeeksAgo.toDateString(),
+                    ]
                 }
             });
         } catch (errorMessage) {
