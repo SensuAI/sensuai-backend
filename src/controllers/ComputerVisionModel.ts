@@ -23,7 +23,7 @@ class ComputerVisionController extends AbstractController {
 
     private async plateIdentified(identificationData: any): Promise<void> {
         // Verify if plate is registered
-        const plateId: string = identificationData.plate;
+        const plateId: string = identificationData.license_number;
         let plate: HydratedDocument<ICarPlate> | null = await CarPlateModel.findOne({
             plate: plateId
         });
@@ -33,31 +33,28 @@ class ComputerVisionController extends AbstractController {
             );
         }
 
-        // Create the transaction if the vehicle is associated with an username
-        if (plate.username) {
-            const liters = Math.random() * 80;
-            const newTransaction: HydratedDocument<ITransaction> = await TransactionModel.create(
-                new TransactionModel({
-                    branch_id: new mongoose.Types.ObjectId(identificationData.branch_id),
-                    plate: plateId,
-                    duration_minutes_transaction: Math.random() * 10,
-                    payment_method: PaymentMethods.Cash,
-                    amount: liters * 22.3,
-                    gas_type: GasTypes.Regular,
-                    gas_quantity: liters,
-                    additional_services: false,
-                    vehicule_type: "Car"
-                })
-            );
+        const liters = Math.random() * 80;
+        const newTransaction: HydratedDocument<ITransaction> = await TransactionModel.create(
+            new TransactionModel({
+                branch_id: new mongoose.Types.ObjectId(identificationData.branch_id),
+                plate: plateId,
+                duration_minutes_transaction: identificationData.frame_nmr_y - identificationData.frame_nmr_x,
+                payment_method: PaymentMethods.Cash,
+                amount: liters * 22.3,
+                gas_type: GasTypes.Regular,
+                gas_quantity: liters,
+                additional_services: false,
+                vehicule_type: identificationData.vehicle_type
+            })
+        );
 
-            // Register the transaction in the corresponding plate
-            const newCarPlate: HydratedDocument<ICarPlate> | null = await CarPlateModel
-            .findByIdAndUpdate(
-                plate._id,
-                { $push: { transactions: newTransaction._id } },
-                { new: true }
-            );
-        }
+        // Register the transaction in the corresponding plate
+        const newCarPlate: HydratedDocument<ICarPlate> | null = await CarPlateModel
+        .findByIdAndUpdate(
+            plate._id,
+            { $push: { transactions: newTransaction._id } },
+            { new: true }
+        );
     }
 
     /* Routes Methods */
