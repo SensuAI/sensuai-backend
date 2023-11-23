@@ -1,0 +1,136 @@
+swagger: '2.0'
+paths:
+  /statistics/{branch_id}/typeOfPaymentCount:
+    get:
+      summary: Conteo de transacciones que usaron cada método de pago
+      tags: [BranchStatistics]
+      description: Conteo de transacciones que usaron cada método de pago
+      parameters:
+        - in: path
+          name: branch_id
+          schema:
+            type: string
+            example: 65305af12d52015c59e2f139
+          required: true
+          description: El id auto-generado de la sucursal
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/{branch_id}/visitsPerHour:
+    get:
+      summary: Conteo de transacciones totales en cada hora
+      tags: [BranchStatistics]
+      description: Conteo de transacciones totales en cada hora
+      parameters:
+        - in: path
+          name: branch_id
+          schema:
+            type: string
+            example: 65305af12d52015c59e2f139
+          required: true
+          description: El id auto-generado de la sucursal
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/{branch_id}/visitsPerMonth:
+    get:
+      summary: Conteo de transacciones en cada mes del año
+      tags: [BranchStatistics]
+      description: Conteo de transacciones en cada mes del año
+      parameters:
+        - in: path
+          name: branch_id
+          schema:
+            type: string
+            example: 65305af12d52015c59e2f139
+          required: true
+          description: El id auto-generado de la sucursal
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+  
+  /statistics/{branch_id}/meanTransactionTimePerMonth:
+    get:
+      summary: Duración media de todas las transacciones en cada mes del año
+      tags: [BranchStatistics]
+      description: Duración media de todas las transacciones en cada mes del año
+      parameters:
+        - in: path
+          name: branch_id
+          schema:
+            type: string
+            example: 65305af12d52015c59e2f139
+          required: true
+          description: El id auto-generado de la sucursal
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/{branch_id}/incomePerHour:
+    get:
+      summary: Ganancias totales de las transacciones en cada hora del día
+      tags: [BranchStatistics]
+      description: Ganancias totales de las transacciones en cada hora del día
+      parameters:
+        - in: path
+          name: branch_id
+          schema:
+            type: string
+            example: 65305af12d52015c59e2f139
+          required: true
+          description: El id auto-generado de la sucursal
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
