@@ -1,0 +1,160 @@
+swagger: '2.0'
+paths:
+  /branch/create:
+    post:
+      summary: Crear una nueva sucursal
+      tags: [Branch]
+      description: Crear un nueva nueva sucursal y guardarla en la base de datos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Branch'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+  /branch/{id}/changeManager:
+    post:
+      summary: Cambiar el gerente de una sucursal
+      tags: [Branch]
+      description: Sustituir el gerente dado el ID de la sucursal y el ID del nuevo gerente
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            example: 65305af12d52015c59e2f139
+          required: true
+          description: El id auto-generado de la sucursal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_manager:
+                  type: string
+                  description: El id auto-generado del nuevo usuario gerente
+              example:
+                id_manager: 65295b427a3c1442810b77cb
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /branch/getAll:
+    get:
+      summary: Obtener todas las sucursales
+      tags: [Branch]
+      description: Regresa un arreglo con todas las sucursales de la base de datos
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      required:
+      properties:
+        status:
+          type: string
+          description: String 'Success' indicando que el resultado fue exitoso
+        message:
+          type: string
+          description: Un mensaje de la operación realizada
+        data:
+          type: object
+          description: Los datos solicitados o enviados, dependiendo la ruta
+      example:
+        status: Success
+        description: The operation has been applied successfully
+    
+    FailureResponse:
+      type: object
+      required:
+      properties:
+        status:
+          type: string
+          description: String 'Fail' indicando que hubo un error
+        message:
+          type: string
+          description: Un mensaje del error que se encontró al ejecutar la petición
+      example:
+        status: Fail
+        description: Error processing the request
+      
+    Branch:
+      type: object
+      required:
+        - name
+        - state
+        - city
+        - street
+        - postal_code
+        - phone
+        - id_manager
+      properties:
+        id:
+          type: string
+          description: El id auto-generado de la sucursal
+        name:
+          type: string
+          description: El nombre de la sucursal
+        state:
+          type: string
+          description: El estado donde se encuentra la sucursal
+        city:
+          type: string
+          description: La ciudad donde se encuentra la sucursal
+        street:
+          type: string
+          description: La calle donde se encuentra la sucursal
+        postal_code:
+          type: string
+          description: El código postal de donde se encuentra la sucursal
+        phone:
+          type: string
+          description: El número de teléfono de la sucursal
+        id_manager:
+          type: string
+          description: El id auto-generado que se le asignó al usuario que es generente de esta sucursal
+      example:
+        name: OXXO Gas Tultitlan
+        state: Estado de México
+        city: Tultitlán de Mariano Escobedo
+        street: Av. Hidalgo
+        postal_code: "54900"
+        phone: "5549380921"
+        id_manager: 65295b427a3c1442810b77cb
