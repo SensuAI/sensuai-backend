@@ -1,0 +1,35 @@
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      required:
+      properties:
+        status:
+          type: string
+          description: String 'Success' indicando que el resultado fue exitoso
+        message:
+          type: string
+          description: Un mensaje de la operación realizada
+        data:
+          type: object
+          description: Los datos solicitados o enviados, dependiendo la ruta
+      example:
+        status: Success
+        description: The operation has been applied successfully
+        data:
+          key1: value1
+          key2: value2
+    
+    FailureResponse:
+      type: object
+      required:
+      properties:
+        status:
+          type: string
+          description: String 'Fail' indicando que hubo un error
+        message:
+          type: string
+          description: Un mensaje del error que se encontró al ejecutar la petición
+      example:
+        status: Fail
+        description: Error processing the request
