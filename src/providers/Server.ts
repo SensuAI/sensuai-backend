@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import AbstractController from '../controllers/AbstractController';
 import mongoose from 'mongoose';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from "swagger-ui-express";
 
 class Server {
 
@@ -22,6 +24,30 @@ class Server {
         this.env = appInit.env;
         this.loadMiddlewares(appInit.middlewares);
         this.routes(appInit.controllers);
+
+        const swaggerOptions: swaggerJSDoc.Options = {
+            swaggerDefinition: {
+                openapi: "3.0.0",
+                info: {
+                    title: "API",
+                    version: "1.0.0",
+                    description: "API",
+                },
+                servers: [
+                    {
+                        url: "http://localhost:8080",
+                        description: "Development server"
+                    }
+                ]
+            },
+            apis: ["./src/api_docs/*.yaml"]
+        };
+
+        // Initialize swagger-jsdoc
+        const swaggerSpec = swaggerJSDoc(swaggerOptions);
+
+        // Serve Swagger API documentation
+        this._app.use("/api/docs/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
 
     //Cargar los middlewares
