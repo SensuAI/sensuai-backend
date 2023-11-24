@@ -1,0 +1,208 @@
+swagger: '2.0'
+paths:
+  /user/signup:
+    post:
+      summary: Registrar a un nuevo usuario
+      tags: [User]
+      description: Registrar a un nuevo usuario en la base de datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /user/signupMany:
+    post:
+      summary: Crear multiples nuevos usuarios
+      tags: [User]
+      description: Crear nuevos usuarios y guardarlos en la base de datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /user/signin:
+    post:
+      summary: Dar acceso a un usuario
+      tags: [User]
+      description: Dar acceso a un usuario a la plataforma
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              example:
+                email: eduardo.corval@gmail.com
+                password: mypassword123
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /user/changePassword:
+    post:
+      summary: Cambiar contraseña
+      tags: [User]
+      description: Cambiar contraseña a un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                new_password:
+                  type: string
+              example:
+                email: eduardo.corval@gmail.com
+                password: mypassword123
+                new_password: mynewpassword123
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /user/getAllManagers:
+    get:
+      summary: Obtener todos los usuarios de tipo gerente
+      tags: [User]
+      description: Regresa un arreglo con todos los usuarios de tipo gerente de la base de datos
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /user/{id}:
+    get:
+      summary: Obtener información de un usuario
+      tags: [User]
+      description: Obtener información de un usuario dado su id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            example: 652729dd5198ddb15adf16fa
+          required: true
+          description: El id del usuario a recuperar
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+components:
+  schemas:  
+    User:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+        - role
+      properties:
+        id:
+          type: string
+          description: El id auto-generado del usuario
+        first_name:
+          type: string
+          description: El nombre del usuario
+        last_name:
+          type: string
+          description: El apellido del usuario
+        email:  
+          type: string
+          description: El correo electrónico del usuario
+        password:
+          type: string  
+          description: La contraseña introducida por el usuario
+        role:
+          type: string
+          description: "El rol del usuario (enum: [ADMIN, MANAGER])"
+        
+      example:
+        first_name: Sebastian Alejandro
+        last_name: Avila Guzman
+        email: eduardo.corval@gmail.com
+        password: mypassword123
+        role: ADMIN
