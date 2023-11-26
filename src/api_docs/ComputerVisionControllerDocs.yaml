@@ -1,0 +1,59 @@
+swagger: '2.0'
+paths:
+  /model/plateIdentified:
+    post:
+      summary: Crear una nueva transacción
+      tags: [Model]
+      description: Crear una nueva transacción para la placa identificada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelInfo'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+components:
+  schemas:  
+    ModelInfo:
+      type: object
+      required:
+        - license_number
+        - branch_id
+        - frame_nmr_x
+        - frame_nmr_y
+        - vehicle_type
+      properties:
+        license_number:
+          type: string
+          description: La placa identificada por el modelo
+        branch_id:
+          type: string
+          description: El id auto-generado para la sucursal en la que se generó la transacción
+        frame_nmr_x:
+          type: number
+          description: El numero de frame en que se detectó inicialmente la placa
+        frame_nmr_y:
+          type: number
+          description: El número de frame en el que se dejó de detectar la placa
+        vehicle_type:
+          type: string
+          description: El tipo de vehículo detectado
+      example:
+        license_number: R59-ADF
+        branch_id: 65305af12d52015c59e2f139
+        frame_nmr_x: 5
+        frame_nmr_y: 10
+        vehicle_type: "car"

@@ -1,0 +1,149 @@
+swagger: '2.0'
+paths:
+  /plate/registerOne:
+    post:
+      summary: Crear una nuevo registro de placa
+      tags: [CarPlate]
+      description: Crear un nuevo registro de placa y guardarlo en la base de datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarPlate'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /plate/register:
+    post:
+      summary: Crear multiples registros de placa
+      tags: [CarPlate]
+      description: Crear nuevos registro de placa y guardarlos en la base de datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plates:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CarPlate'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /plate/getAll:
+    get:
+      summary: Obtener todas las placas registradas
+      tags: [CarPlate]
+      description: Regresa un arreglo con todas las placas registradas en la base de datos
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /plate/{plate}:
+    get:
+      summary: Obtener el registro que corresponde con la placa dada
+      tags: [CarPlate]
+      description: Obtener el registro que corresponde con la placa dada
+      parameters:
+        - in: path
+          name: plate
+          schema:
+            type: string
+            example: R59-ADF
+          required: true
+          description: La placa a recuperar
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /plate/assignUser:
+    post:
+      summary: Asignar un nombre de usuario al registro de una placa
+      tags: [CarPlate]
+      description: Aisgnar un nombre de usuario al registro de una placa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plate:
+                  type: string
+                  description: La placa a la cual aplicar el proceso
+              example:
+                plate: R59-ADF
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+components:
+  schemas:  
+    CarPlate:
+      type: object
+      required:
+        - plate
+      properties:
+        id:
+          type: string
+          description: El id auto-generado para el automóvil
+        plate:
+          type: string
+          description: La placa del automóvil
+      example:
+        plate: R59-ADF

@@ -1,0 +1,155 @@
+swagger: '2.0'
+paths:
+  /transaction/register:
+    post:
+      summary: Crear una nueva transacción
+      tags: [Transaction]
+      description: Crear un nueva nueva transacción y guardarla en la base de datos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+
+  /transaction/registerMany:
+    post:
+      summary: Crear múltiples transacciones
+      tags: [Transaction]
+      description: Crear múltiples transacciones y guardarlas en la base de datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactions:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Transaction'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /transaction/getAll:
+    get:
+      summary: Obtener todas las transacciones
+      tags: [Transaction]
+      description: Regresa un arreglo con todas las transacciones de la base de datos
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /transaction/{plate}/statistics:
+    get:
+      summary: Estadísticas de las transacciones de una placa en particular
+      tags: [Transaction]
+      description: Duración media de las transacciones, cantidad de transacciones con servicios adicionales, fecha de la última transacción y total de dinero gastado
+      parameters:
+        - in: path
+          name: plate
+          schema:
+            type: string
+            example: R59-ADF
+          required: true
+          description: La placa del vehículo a consultar
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+components:
+  schemas:  
+    Transaction:
+      type: object
+      required:
+        - branch_id
+        - plate
+        - payment_method
+        - amount
+        - gas_type
+        - gas_quantity
+      properties:
+        id:
+          type: string
+          description: El id auto-generado para la transacción
+        branch_id:
+          type: string
+          description: El id auto-generado de la sucursal en la que se realizó la transacción
+        plate:
+          type: string
+          description: La placa del auto para la que se realiza la transacción
+        duration_minutes_transaction:
+          type: number
+          description: Duración de la transacción en minutos
+        payment_method:
+          type: string
+          description: "Método de pago utilizado (enum: [Cash, CreditCard, DebitCard])"
+        amount:
+          type: number
+          description: Cantidad pagada en la transacción
+        gas_type:
+          type: string
+          description: "Tipo de gasolina (enum: [Regular, Premium, Diesel])"
+        gas_quantity:
+          type: string
+          description: Cantidad de gasolina de la transacción en litros
+        additional_services:
+          type: boolean
+          description: Si la transacción contó con servicios adicionales
+        vehicule_type:
+          type: string
+          description: Tipo de vehículo que realizó la transacción 
+      example:
+        branch_id: 65305af12d52015c59e2f139
+        plate: R59-ADF
+        duration_minutes_transaction: 5
+        payment_method: CreditCard
+        amount: 150.25
+        gas_type: Regular
+        gas_quantity: 7.3
+        additional_services: false
+        vehicule_type: Car

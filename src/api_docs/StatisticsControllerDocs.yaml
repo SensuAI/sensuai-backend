@@ -1,0 +1,115 @@
+swagger: '2.0'
+paths:
+  /statistics/typeOfPaymentCount:
+    get:
+      summary: Conteo de transacciones que usaron cada método de pago
+      tags: [GlobalStatistics]
+      description: Conteo de transacciones que usaron cada método de pago
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/visitsPerHour:
+    get:
+      summary: Conteo de transacciones totales en cada hora
+      tags: [GlobalStatistics]
+      description: Conteo de transacciones totales en cada hora
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/visitsPerMonth:
+    get:
+      summary: Conteo de transacciones en cada mes del año
+      tags: [GlobalStatistics]
+      description: Conteo de transacciones en cada mes del año
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+  
+  /statistics/meanTransactionTimePerMonth:
+    get:
+      summary: Duración media de todas las transacciones en cada mes del año
+      tags: [GlobalStatistics]
+      description: Duración media de todas las transacciones en cada mes del año
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/incomePerHour:
+    get:
+      summary: Ganancias totales de las transacciones en cada hora del día
+      tags: [GlobalStatistics]
+      description: Ganancias totales de las transacciones en cada hora del día
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+  /statistics/weeklyStatistics:
+    get:
+      summary: Tiempo medio de transacciones y ganancias semanales para las últimas 3 semanas
+      tags: [GlobalStatistics]
+      description: Tiempo medio de transacciones y ganancias semanales para las últimas 3 semanas
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
